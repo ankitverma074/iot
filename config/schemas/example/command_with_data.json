@@ -1,0 +1,47 @@
+[{
+	"commandData": {
+		"format": "JSON",
+		"resource": "MQTT_message"
+	},
+	"properties": {
+		"profile": {
+			"required": false,
+			"type": "number",
+			"mapTo": "profile_id"
+		},
+		"command_id": {
+			"required": true,
+			"type": "number",
+			"mapTo": "obj_id_H"
+		},
+		"parameters": {
+			"properties": {
+				"null": {
+					"required": true,
+					"type": "object",
+					"mapTo": "cmd_parameters"
+				}
+			}
+		}
+	}
+},{
+	"commandData": {
+		"format": "SPLIT_STRING",
+		"resource": "MQTT_topic"
+	},
+	"separator": "/",
+	"properties": {
+		"0": {
+			"required": true,
+			"type": "number",
+			"mapTo": "topic_const_val",
+			"value": "commands"
+		},
+		"1": {
+			"required": true,
+			"type": "number",
+			"mapTo": "device_id",
+			"tokenizer": ":"
+		}
+	}
+}]

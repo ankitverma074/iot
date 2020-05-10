@@ -1,0 +1,15 @@
+{
+	"type": "object",
+	"parserData": {
+		"format": "SPLIT_STRING",
+		"resource": "MQTT_topic",
+		"messageType": "default"
+	},
+	"separator": "/",
+	"properties": {
+		"1": {
+			"type": "string",
+			"mapTo": "device_alternate_id"
+		}
+	}
+}

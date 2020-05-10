@@ -1,0 +1,4 @@
+# This is a comment...
+# Please, separate records with commas. The meaning of columns is the following:
+# STUB ID, PID, INSTANCE (dory | monitor), BASE PATH, Broker kaha store path
+9,243208,dory,C:\Users\ankiverma\Documents\IOTApps\Gateway_New,MQTT,gateway-mqtt

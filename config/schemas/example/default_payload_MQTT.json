@@ -1,0 +1,92 @@
+{
+  "type": "object",
+  "parserData": {
+    "format": "JSON",
+    "resource": "MQTT_message",
+    "messageType": "default",
+    "messageTypeFinder": {
+      "format": "JSON_POINTER",
+      "jsonPointer": "/messageType"
+    }
+  },
+  "properties": {
+    "measureMessageId": {
+      "type": "string",
+      "mapTo": "measure_message_id"
+    },
+    "deviceAlternateId": {
+      "type": "string",
+      "mapTo": "device_alternate_id"
+    },
+    "measures": {
+      "type": "object",
+      "mapTo": "value",
+      "properties": {
+        "*": {
+          "mapKeyTo": "property_name",
+          "mapTo": "value"
+        }
+      }
+    },
+    "capabilityAlternateId": {
+      "type": "string",
+      "mapTo": "capability_alternate_id"
+    },
+    "sensorAlternateId": {
+      "type": "string",
+      "mapTo": "sensor_alternate_id"
+    },
+    "timestamp": {
+      "type": "string",
+      "mapTo": "start_time",
+      "format": "ISO8601orJavaTimestamp"
+    },
+    "sensorTypeAlternateId": {
+      "type": "number",
+      "mapTo": "sensor_type_alternate_id"
+    },
+    "sensorId": {
+      "type": "string",
+      "mapTo": "sensor_id"
+    },
+	"processingTag": {
+      "type": "string",
+      "mapTo": "processing_tag"
+    },
+    "position": {
+      "type": "number",
+      "group": "position",
+      "mapTo": "position_absolute"
+    },
+    "latitude": {
+      "type": "number",
+      "group": "position",
+      "mapTo": "position_latitude"
+    },
+    "longitude": {
+      "type": "number",
+      "group": "position",
+      "mapTo": "position_longitude"
+    },
+    "altitude": {
+      "type": "number",
+      "group": "position",
+      "mapTo": "position_altitude"
+    },
+    "positionSensorTypeAlternateId": {
+      "type": "number",
+      "group": "position",
+      "mapTo": "sensor_type_alternate_id"
+    },
+    "positionSensorAlternateId": {
+      "type": "string",
+      "group": "position",
+      "mapTo": "sensor_alternate_id"
+    },
+    "positionCapabilityAlternateId": {
+      "type": "string",
+      "group": "position",
+      "mapTo": "capability_alternate_id"
+    }
+  }
+}

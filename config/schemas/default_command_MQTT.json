@@ -1,0 +1,37 @@
+[{
+	"commandData": {
+		"format": "JSON",
+		"resource": "MQTT_message"
+	},
+	"properties": {
+		"capabilityAlternateId": {
+			"type": "string",
+			"mapTo": "capability_alternate_id"
+		},
+		"sensorAlternateId": {
+			"type": "string",
+			"mapTo": "sensor_alternate_id"
+		},
+		"command": {
+			"type": "object",
+			"mapTo": "command_parameters"
+		}
+	}
+},{
+	"commandData": {
+		"format": "SPLIT_STRING",
+		"resource": "MQTT_topic"
+	},
+	"separator": "/",
+	"properties": {
+		"0": {
+			"type": "number",
+			"mapTo": "topic_fixed_field",
+			"value": "commands"
+		},
+		"1": {
+			"type": "string",
+			"mapTo": "device_alternate_id"
+		}
+	}
+}]

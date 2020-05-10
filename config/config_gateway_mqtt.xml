@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="cnfTransform.xsl"?>
+<cnf:configuration xsi:schemaLocation="http://sap.com/iotservices/xsd/config"
+                   xmlns:cnf="http://sap.com/iotservices/xsd/config"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <cnf:amq>
+        <cnf:connectors>
+            <cnf:client>
+                <cnf:connectionString>failover:(nio+ssl://efc23863-7ceb-4dcd-809e-c1f70d62bf4f.us10.cp.iot.sap:61616?daemon=true&amp;soTimeout=60000&amp;verifyHostName=true)?initialReconnectDelay=5000</cnf:connectionString>
+                <!-- <cnf:connectionString>failover:(nio://127.0.0.1:61619?daemon=true&amp;soTimeout=60000)?initialReconnectDelay=5000</cnf:connectionString> -->
+                <cnf:streamTTL>5000</cnf:streamTTL>
+                <cnf:TTL>200000</cnf:TTL>
+                <cnf:soap_over_jms_tmo>60000</cnf:soap_over_jms_tmo>
+                <cnf:concurrentProducers>5</cnf:concurrentProducers>
+                <cnf:concurrentConsumers>5</cnf:concurrentConsumers>
+                <cnf:ackMode>1</cnf:ackMode><!-- AUTO_ACKNOWLEDGE = 1 / SESSION_TRANSACTED = 0 -->
+                <cnf:nonPersistent/>
+                <cnf:maxConnections>8</cnf:maxConnections>
+            </cnf:client>
+        </cnf:connectors>
+    </cnf:amq>
+    <cnf:coreConnection>
+        <cnf:address>https://efc23863-7ceb-4dcd-809e-c1f70d62bf4f.us10.cp.iot.sap:443/iot/core/api/v1/</cnf:address>
+        <cnf:timeout>60000</cnf:timeout>
+        <cnf:authentication>BASIC_AUTH</cnf:authentication>
+        <cnf:mutual>false</cnf:mutual>
+    </cnf:coreConnection>
+    <cnf:gatewayBundle gatewayver="MQTT">
+        <cnf:endpoints>
+            <cnf:cxf lan="true">
+                <cnf:address dev="gateway">127.0.0.1</cnf:address>
+                <cnf:soapPort client_rx_tmo="60000" client_conn_tmo="60000">8170</cnf:soapPort>
+            </cnf:cxf>
+        </cnf:endpoints>
+        <cnf:amq>
+            <cnf:brokerName>gateway-mqtt</cnf:brokerName>
+            <cnf:connectors>
+                <cnf:server>
+                    <cnf:transportConnectors>
+                        <cnf:transportConnector name="mqtt" uri="mqtt://127.0.0.1:61618?transport.soTimeout=60000"/>
+                        <cnf:transportConnector name="mqtt+mutualAuth"
+                                                uri="mqtt+nio+ssl://127.0.0.1:61628?wantClientAuth=true&amp;transport.soTimeout=60000"/>
+                        <cnf:transportConnector name="mqtt-bus-connector"
+                                                uri="mqtt+nio+ssl://127.0.0.1:61638?needClientAuth=true&amp;transport.soTimeout=60000"/>
+                    </cnf:transportConnectors>
+                    <cnf:defaultTTL>30000</cnf:defaultTTL>
+                    <cnf:expireMessagePeriod>200000</cnf:expireMessagePeriod> <!-- 200 seconds -->
+                    <cnf:pendingMessageLimit>200000</cnf:pendingMessageLimit> <!-- After this, start checking TTL -->
+                    <cnf:stream_expireMessagePeriod>5000</cnf:stream_expireMessagePeriod> <!-- 5 seconds -->
+                    <cnf:stream_pendingMessageLimit>200000</cnf:stream_pendingMessageLimit> <!-- After this, start checking TTL -->
+                    <cnf:offlineDurableSubscriberTimeout>3600000</cnf:offlineDurableSubscriberTimeout> <!-- 1 hour -->
+                    <cnf:offlineDurableSubscriberTaskSchedule>120000
+                    </cnf:offlineDurableSubscriberTaskSchedule> <!-- 2 minutes -->
+                    <cnf:memoryUsage memory="64" store="50000" temp="10000"/>  <!-- in mBytes -->
+                    <cnf:destinationPolicies>
+                        <cnf:policyEntry topic="measures.>" durableTopicPrefetch="-1"/>
+                    </cnf:destinationPolicies>
+                </cnf:server>
+            </cnf:connectors>
+        </cnf:amq>
+        <cnf:gateway gatewayAlternateId="9172936475568798">
+            <cnf:technology>mqtt</cnf:technology>
+            <cnf:vendor>SAP</cnf:vendor>
+            <cnf:gateway_comm>
+                <cnf:media>JMS</cnf:media>
+                <cnf:useAsServer>true</cnf:useAsServer>
+                <cnf:jmsConnectionString>failover:(vm://gateway-mqtt?waitForStart=30000&amp;create=false)</cnf:jmsConnectionString>
+                <cnf:jmsMessageTimeToLive>3600000</cnf:jmsMessageTimeToLive> <!-- 1 hour -->
+                <cnf:jmsPersistentMode>true</cnf:jmsPersistentMode>
+                <cnf:jmsProducerSharedExecutor>
+                    <cnf:size>1</cnf:size>
+                    <cnf:destinations>
+                        <cnf:destination>commands.*</cnf:destination>
+                        <!-- the following topics are used for reporting the processing status of measurement data -->
+                        <cnf:destination>ack.*</cnf:destination>
+                    </cnf:destinations>
+                </cnf:jmsProducerSharedExecutor>
+                <cnf:security>false</cnf:security>
+                <cnf:disableGatewayContentSent>true</cnf:disableGatewayContentSent>
+            </cnf:gateway_comm>
+            <cnf:trigger_comm>
+                <cnf:media>Command</cnf:media>
+            </cnf:trigger_comm>
+            <cnf:startSinkAsCoord>true</cnf:startSinkAsCoord>
+            <cnf:persistTopology>true</cnf:persistTopology>
+            <cnf:waitBeforeNextWrite>0</cnf:waitBeforeNextWrite>
+            <cnf:simulData>false</cnf:simulData>
+            <cnf:defaultRFDWakeUp>7500</cnf:defaultRFDWakeUp>
+            <cnf:defaultFFDLoadShedding>7500</cnf:defaultFFDLoadShedding>
+            <cnf:minRouterBufSize>100</cnf:minRouterBufSize>
+            <cnf:waitBeforeParentRemove>1800</cnf:waitBeforeParentRemove> <!-- 30mins: 30*60sec -->
+            <cnf:periodicalDataReports>
+                <cnf:periodicalAlternateId>11:22:33:44:55:66:77:88</cnf:periodicalAlternateId>
+            </cnf:periodicalDataReports>
+            <cnf:nodePositions>
+                <cnf:nodePosition>
+                    <!--coord -->
+                    <cnf:posAlternateId>00:0c:29:bb:fe:53:00:00</cnf:posAlternateId>
+                    <cnf:posX>230</cnf:posX>
+                    <cnf:posY>120</cnf:posY>
+                    <cnf:posZ>0</cnf:posZ>
+                </cnf:nodePosition>
+            </cnf:nodePositions>
+            <cnf:defaultValues>
+                <cnf:defaultSensorTypeAlternateId>0</cnf:defaultSensorTypeAlternateId>
+                <cnf:positioningSensorAlternateId>position</cnf:positioningSensorAlternateId>
+                <cnf:positioningCapabilityAlternateId>4</cnf:positioningCapabilityAlternateId>
+            </cnf:defaultValues>
+        </cnf:gateway>
+        <cnf:wsnLifecycle>
+            <cnf:generatePingReq>false</cnf:generatePingReq>
+            <!--<cnf:strokingTime></cnf:strokingTime> -->
+            <cnf:rfdVitalityOn>true</cnf:rfdVitalityOn>
+            <cnf:defaultRfdTolerance>0.50</cnf:defaultRfdTolerance>
+            <cnf:missingAfterMiss>5</cnf:missingAfterMiss>
+            <cnf:useRfdStdDeviation>false</cnf:useRfdStdDeviation>
+            <cnf:samplingTimeout>2000</cnf:samplingTimeout>
+            <cnf:burstDelta>5000</cnf:burstDelta>
+            <cnf:reportingTime>120000</cnf:reportingTime>
+            <cnf:policyType>DATA_TRAINING</cnf:policyType>
+        </cnf:wsnLifecycle>
+        <cnf:buffering active="true">
+            <cnf:queueMaxElement>10000</cnf:queueMaxElement>    <!-- max number of element in PriorityBlockingQueue -->
+            <cnf:bufferTrigger>80
+            </cnf:bufferTrigger>           <!-- percentage of the maximum heap size that triggers Gateway buffering -->
+            <cnf:maxFileDimension>100</cnf:maxFileDimension>    <!-- max file dimension * 1000 (2 -> 2KB) -->
+            <cnf:maxDisk>4096000000</cnf:maxDisk>               <!-- space dedicated to buffering file -->
+            <cnf:saturation>70</cnf:saturation>                 <!-- percetage of hd use -->
+            <cnf:checkMemory>false
+            </cnf:checkMemory>            <!-- true if you want to flush the buffer once memory is critical -->
+        </cnf:buffering>
+        <cnf:propertyMap>policyDispatcherEnabled=true
+            MQTT_JSON_SCHEMA=default.json
+            nodeAcceptedByDef=true
+            test=ok
+            useDefaultPositioning=true
+        </cnf:propertyMap>
+    </cnf:gatewayBundle>
+    <cnf:keepAlive>
+        <cnf:stopSystemOnFault>false</cnf:stopSystemOnFault>
+    </cnf:keepAlive>
+    <cnf:security>
+        <cnf:active>true</cnf:active>
+        <cnf:useLANendpoints>false</cnf:useLANendpoints>
+    </cnf:security>
+</cnf:configuration>
